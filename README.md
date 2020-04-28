@@ -41,4 +41,4 @@ $response = $request_handler->handle(ServerRequestFactory::fromGlobals());
 
 ## License
 
-The package is licensed under the MIT license. See [License File](https://github.com/debuss/borsch-requesthandler/blob/master/LICENSE.md) for more information.
+The package is licensed under the MIT license. See [License File](https://github.com/debuss/borsch-middlewares/blob/master/LICENSE.md) for more information.
