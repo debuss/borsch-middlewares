@@ -1,4 +1,4 @@
-# Borsch - RequestHandler
+# Borsch - Middlewares
 
 A collection of common PSR-15 Middleware for Borsch applications.
 
