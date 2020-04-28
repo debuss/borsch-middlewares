@@ -1,0 +1,24 @@
+{
+  "name": "borsch/middlewares",
+  "description": "A collection of common PSR-15 Middleware.",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Alexandre DEBUSSCHERE",
+      "email": "zizilex@gmail.com"
+    }
+  ],
+  "require": {
+    "psr/http-server-middleware": "1.0.1"
+  },
+  "require-dev": {
+    "borsch/router": "1.2",
+    "laminas/laminas-diactoros": "2.2.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Borsch\\Middleware\\": "src/"
+    }
+  }
+}
