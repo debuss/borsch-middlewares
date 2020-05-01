@@ -24,15 +24,24 @@ use Psr\Http\Server\RequestHandlerInterface;
 class RouteMiddleware implements MiddlewareInterface
 {
 
+    /** @var RouterInterface */
+    protected $router;
+
+    /**
+     * RouteMiddleware constructor.
+     * @param RouterInterface $router
+     */
+    public function __construct(RouterInterface $router)
+    {
+        $this->router = $router;
+    }
+
     /**
      * @inheritDoc
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /** @var RouterInterface $router */
-        $router = $request->getAttribute(RouterInterface::class);
-
-        $request = $request->withAttribute(RouteResult::class, $router->match($request));
+        $request = $request->withAttribute(RouteResult::class, $this->router->match($request));
 
         return $handler->handle($request);
     }

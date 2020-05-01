@@ -5,7 +5,7 @@
 
 namespace Borsch\Middleware;
 
-use Psr\Http\Message\ResponseFactoryInterface;
+use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -26,9 +26,8 @@ class NotFoundHandlerMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /** @var ResponseFactoryInterface $response_factory */
-        $response_factory = $request->getAttribute(ResponseFactoryInterface::class);
-        $response = $response_factory->createResponse()->withStatus(404, 'Not Found');
+        $response = new Response();
+        $response = $response->withStatus(404, 'Not Found');
 
         $response->getBody()->write(sprintf(
             '%s %s 404 Not Found',

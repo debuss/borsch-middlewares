@@ -6,6 +6,7 @@
 namespace Borsch\Middleware;
 
 use Borsch\Router\RouteResult;
+use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -44,13 +45,11 @@ class ImplicitOptionsMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        /** @var ResponseFactoryInterface $response_factory */
-        $response_factory = $request->getAttribute(ResponseFactoryInterface::class);
+        $response = new Response();
 
-        return $response_factory->createResponse()
-            ->withHeader(
-                'Allow',
-                implode(', ', $result->getAllowedMethods())
-            );
+        return $response->withHeader(
+            'Allow',
+            implode(', ', $result->getAllowedMethods())
+        );
     }
 }

@@ -6,7 +6,7 @@
 namespace Borsch\Middleware;
 
 use Borsch\Router\RouteResult;
-use Psr\Http\Message\ResponseFactoryInterface;
+use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -32,10 +32,8 @@ class MethodNotAllowedMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        /** @var ResponseFactoryInterface $response_factory */
-        $response_factory = $request->getAttribute(ResponseFactoryInterface::class);
-
-        return $response_factory->createResponse()
+        $response = new Response();
+        return $response
             ->withStatus(405, 'Method Not Allowed')
             ->withHeader(
                 'Allow',

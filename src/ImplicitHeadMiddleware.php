@@ -24,6 +24,18 @@ use Psr\Http\Server\RequestHandlerInterface;
 class ImplicitHeadMiddleware implements MiddlewareInterface
 {
 
+    /** @var RouterInterface */
+    protected $router;
+
+    /**
+     * ImplicitHeadMiddleware constructor.
+     * @param RouterInterface $router
+     */
+    public function __construct(RouterInterface $router)
+    {
+        $this->router = $router;
+    }
+
     /**
      * @inheritDoc
      */
@@ -42,9 +54,7 @@ class ImplicitHeadMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        /** @var RouterInterface $router */
-        $router = $request->getAttribute(RouterInterface::class);
-        $route_result = $router->match($request->withMethod('GET'));
+        $route_result = $this->router->match($request->withMethod('GET'));
         if ($route_result->isFailure()) {
             return $handler->handle($request);
         }
@@ -53,9 +63,6 @@ class ImplicitHeadMiddleware implements MiddlewareInterface
 
         $response = $handler->handle($request);
 
-        /** @var StreamFactoryInterface $stream_factory */
-        $stream_factory = $request->getAttribute(StreamFactoryInterface::class);
-
-        return $response->withBody($stream_factory->createStream(''));
+        return $response->withBody(new Stream(''));
     }
 }

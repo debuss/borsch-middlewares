@@ -5,6 +5,7 @@
 
 namespace Borsch\Middleware;
 
+use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,6 +27,18 @@ use Throwable;
 class ErrorHandlerMiddleware implements MiddlewareInterface
 {
 
+    /** @var string */
+    protected $environment;
+
+    /**
+     * ErrorHandlerMiddleware constructor.
+     * @param string $environment
+     */
+    public function __construct(string $environment = 'production')
+    {
+        $this->environment = $environment;
+    }
+
     /**
      * @inheritDoc
      */
@@ -34,23 +47,21 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         try {
             return $handler->handle($request);
         } catch (Throwable $error) {
-            /** @var ResponseFactoryInterface $response_factory */
-            $response_factory = $request->getAttribute(ResponseFactoryInterface::class);
-            $development = $request->getAttribute('env', 'production') == 'development';
-
-            $response = $response_factory->createResponse(500);
+            $response = new Response('php://memory', 500);
             $response->getBody()->write(sprintf(
                 '%s %s 500 Internal Server Error',
                 $request->getMethod(),
                 $request->getUri()->getPath()
             ));
 
-            if ($development) {
+            if ($this->environment == 'development') {
+                $response = $response->withHeader('Content-Type', 'text/html; charset=utf-8');
                 $response->getBody()->write(sprintf(
-                    '<br><pre style="padding: 15px; border: 1px solid gray; background: whitesmoke;">(%s) %s [#%s]:<br>%s</pre>',
+                    '<br><pre style="padding: 15px; border: 1px solid gray; background: whitesmoke;">(%s) %s [#%s]:<br>> %s<br><h4>Trace</h4>%s</pre>',
                     $error->getCode(),
                     $error->getFile(),
                     $error->getLine(),
+                    $error->getMessage(),
                     $error->getTraceAsString()
                 ));
             }
